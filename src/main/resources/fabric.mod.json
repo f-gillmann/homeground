@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "homeground",
+  "version": "${version}",
+  "name": "Homeground",
+  "description": "A simple mod for teleporting to spawn and your bed location in Minecraft.",
+  "authors": [
+    "Florian Gillmann"
+  ],
+  "contact": {},
+  "license": "AGPL-3.0",
+  "environment": "server",
+  "accessWidener": "homeground.accesswidener",
+  "entrypoints": {
+    "main": [
+      {
+        "adapter": "kotlin",
+        "value": "sh.flg.homeground.Homeground"
+      }
+    ]
+  },
+  "mixins": [
+    "homeground.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-language-kotlin": ">=${kotlin_loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}",
+    "fabric-permissions-api-v0": "*"
+  }
+}
