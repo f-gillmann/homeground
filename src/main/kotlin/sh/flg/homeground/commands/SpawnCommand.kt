@@ -18,7 +18,7 @@ import com.mojang.brigadier.context.CommandContext
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.SpawnLocating
 import net.minecraft.text.Text
-import net.minecraft.world.GameRules
+import net.minecraft.world.rule.GameRules
 import sh.flg.homeground.CommandManager
 import sh.flg.homeground.CommandRegistry
 import sh.flg.homeground.utils.ModPermissions
@@ -26,9 +26,7 @@ import sh.flg.homeground.utils.TeleportTimerManager
 import java.util.Random
 
 object SpawnCommand : CommandManager.Companion.ModCommand() {
-    init {
-        CommandRegistry.addCommand(this)
-
+    fun register() {
         createCommand(
             name = "spawn",
             description = "Teleport to the spawn point",
@@ -36,6 +34,7 @@ object SpawnCommand : CommandManager.Companion.ModCommand() {
             permission = ModPermissions.COMMAND_SPAWN,
             execute = ::run
         )
+        CommandRegistry.addCommand(this)
     }
 
     private fun run(context: CommandContext<ServerCommandSource>): Int {
@@ -44,19 +43,19 @@ object SpawnCommand : CommandManager.Companion.ModCommand() {
             return 0
         }
 
-        val world = player.server?.overworld
-        val worldSpawnPos = world?.spawnPos
-        val spawnRadius = world?.gameRules?.getInt(GameRules.SPAWN_RADIUS) ?: 0
+        val world = player.server.overworld
+        val worldSpawnPos = world.spawnPoint
+        val spawnRadius = world.gameRules?.getValue(GameRules.RESPAWN_RADIUS) ?: 0
 
         if (world == null || worldSpawnPos == null) {
             context.source.sendError(Text.literal("World or spawn position could not be found."))
             return 0
         }
 
-        val targetX = worldSpawnPos.x + Random().nextInt(-spawnRadius, spawnRadius + 1)
-        val targetZ = worldSpawnPos.z + Random().nextInt(-spawnRadius, spawnRadius + 1)
+        val targetX = worldSpawnPos.pos.x + Random().nextInt(-spawnRadius, spawnRadius + 1)
+        val targetZ = worldSpawnPos.pos.y + Random().nextInt(-spawnRadius, spawnRadius + 1)
 
-        val safePos = SpawnLocating.findOverworldSpawn(world, targetX, targetZ) ?: worldSpawnPos
+        val safePos = SpawnLocating.findOverworldSpawn(world, targetX, targetZ) ?: worldSpawnPos.pos
 
         TeleportTimerManager.start(player, safePos.toCenterPos(), world, "spawn")
 

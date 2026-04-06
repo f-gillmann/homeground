@@ -30,8 +30,8 @@ object CommandRegistry {
     }
 
     private fun loadCommands() {
-        HomeCommand
-        SpawnCommand
+        HomeCommand.register()
+        SpawnCommand.register()
     }
 
     fun initialize() {

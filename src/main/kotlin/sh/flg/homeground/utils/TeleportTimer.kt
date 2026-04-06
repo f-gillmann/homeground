@@ -85,7 +85,7 @@ object TeleportTimerManager {
 
         player.sendMessage(Text.literal("Teleporting to $teleportName..."), false)
 
-        val request = TeleportRequest(player.uuid, teleportName, player.pos, player.world, targetPos, targetWorld)
+        val request = TeleportRequest(player.uuid, teleportName, player.entityPos, player.entityWorld, targetPos, targetWorld)
         activeTeleports[player.uuid] = request
     }
 
@@ -105,7 +105,7 @@ object TeleportTimerManager {
     }
 
     private fun hasPlayerMoved(player: ServerPlayerEntity, request: TeleportRequest): Boolean {
-        if (player.world != request.initialWorld) return true
-        return player.pos.distanceTo(request.initialPos) > 0.1
+        if (player.entityWorld != request.initialWorld) return true
+        return player.entityPos.distanceTo(request.initialPos) > 0.75
     }
 }
